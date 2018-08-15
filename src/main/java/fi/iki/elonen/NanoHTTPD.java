@@ -653,7 +653,19 @@ public abstract class NanoHTTPD {
             this.outputStream = outputStream;
             this.remoteIp = inetAddress.isLoopbackAddress() || inetAddress.isAnyLocalAddress() ? "127.0.0.1" : inetAddress.getHostAddress().toString();
             this.remoteHostname = inetAddress.isLoopbackAddress() || inetAddress.isAnyLocalAddress() ? "localhost" : inetAddress.getHostName().toString();
-            this.headers = new HashMap<String, String>();
+            this.headers = new HashMap<String, String>() {
+
+                @Override
+                public String put(String key, String value) {
+                    return super.put(key == null ? key : key.toLowerCase(), value);
+                }
+
+                @Override
+                public String get(Object key) {
+                    String mKey = (String) key;
+                    return super.get(mKey == null ? mKey : mKey.toLowerCase());
+                }
+            };
         }
 
         /**
