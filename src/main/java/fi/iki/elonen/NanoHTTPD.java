@@ -1333,11 +1333,12 @@ public abstract class NanoHTTPD {
         }
     }
 
-    private static class ResponseHeader {
+    
+    public static class Header {
         private final String name;
         private final String value;
 
-        public ResponseHeader(String name, String value) {
+        public Header(String name, String value) {
             this.name = name;
             this.value = value;
         }
@@ -1357,7 +1358,7 @@ public abstract class NanoHTTPD {
 
     }
 
-    private static class ResponseHeaderContainer implements Iterable<ResponseHeader> {
+    public static class HeaderContainer implements Iterable<Header> {
         private final Map<String, List<String>> headerMap = new LinkedHashMap<String, List<String>>();
 
         public void put(String name, String value) {
@@ -1397,10 +1398,10 @@ public abstract class NanoHTTPD {
         }
 
         @Override
-        public Iterator<ResponseHeader> iterator() {
+        public Iterator<Header> iterator() {
             final Iterator<Entry<String, List<String>>> mapIterator = headerMap.entrySet().iterator();
 
-            return new Iterator<ResponseHeader>() {
+            return new Iterator<Header>() {
 
                 String currentName;
                 Iterator<String> listIterator = null;
@@ -1420,9 +1421,9 @@ public abstract class NanoHTTPD {
                 }
 
                 @Override
-                public ResponseHeader next() {
+                public Header next() {
                     if (hasNext())
-                        return new ResponseHeader(currentName, listIterator.next());
+                        return new Header(currentName, listIterator.next());
 
                     throw new NoSuchElementException();
                 }
@@ -1581,7 +1582,7 @@ public abstract class NanoHTTPD {
          * lowercase map is automatically kept up to date.
          */
         @SuppressWarnings("serial")
-        private final ResponseHeaderContainer header = new ResponseHeaderContainer();
+        private final HeaderContainer header = new HeaderContainer();
 
         /**
          * The request method that spawned this response.
@@ -1697,7 +1698,7 @@ public abstract class NanoHTTPD {
                 if (getLastHeader("date") == null) {
                     printHeader(pw, "Date", gmtFrmt.format(new Date()));
                 }
-                for (ResponseHeader responseHeader : this.header) {
+                for (Header responseHeader : this.header) {
                     printHeader(pw, responseHeader.getName(), responseHeader.getValue());
                 }
                 if (getLastHeader("connection") == null) {
