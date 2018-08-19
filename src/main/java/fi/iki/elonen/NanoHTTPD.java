@@ -1333,7 +1333,7 @@ public abstract class NanoHTTPD {
         }
     }
 
-    
+
     public static class Header {
         private final String name;
         private final String value;
@@ -1362,7 +1362,10 @@ public abstract class NanoHTTPD {
         private final Map<String, List<String>> headerMap = new LinkedHashMap<String, List<String>>();
 
         public void put(String name, String value) {
-            name = name.toLowerCase();
+            name = name.toLowerCase().trim();
+
+            if (name.isEmpty())
+                throw new IllegalArgumentException("Empty name");
 
             List<String> headerValues = headerMap.get(name);
             if (headerValues == null) {
@@ -1374,7 +1377,7 @@ public abstract class NanoHTTPD {
         }
 
         public void remove(String name) {
-            name = name.toLowerCase();
+            name = name.toLowerCase().trim();
 
             List<String> values = get(name);
             if (values != null)
@@ -1384,7 +1387,7 @@ public abstract class NanoHTTPD {
         }
 
         public List<String> get(String name) {
-            return headerMap.get(name.toLowerCase());
+            return headerMap.get(name.toLowerCase().trim());
         }
 
         public String getFirst(String name) {
