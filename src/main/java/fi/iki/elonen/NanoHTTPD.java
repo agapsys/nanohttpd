@@ -1333,8 +1333,8 @@ public abstract class NanoHTTPD {
         }
     }
 
-
     public static class Header {
+
         private final String name;
         private final String value;
 
@@ -1359,7 +1359,16 @@ public abstract class NanoHTTPD {
     }
 
     public static class HeaderContainer implements Iterable<Header> {
+
         private final Map<String, List<String>> headerMap = new LinkedHashMap<String, List<String>>();
+
+        public void clear() {
+            for(Map.Entry<String, List<String>> entry : headerMap.entrySet()) {
+                entry.getValue().clear();
+            }
+
+            headerMap.clear();
+        }
 
         public void put(String name, String value) {
             name = name.toLowerCase().trim();
