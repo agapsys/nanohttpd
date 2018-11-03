@@ -1443,10 +1443,17 @@ public abstract class NanoHTTPD {
         }
     }
 
+    /** Represents a callback to be called after response is sent. */
+    public static interface OnCloseHandler {
+        public void onClose(Response response);
+    }
+
     /**
      * HTTP response. Return one of these from serve().
      */
     public static class Response implements Closeable {
+
+        private OnCloseHandler onCloseHandler = null;
 
         public interface IStatus {
 
@@ -1627,11 +1634,18 @@ public abstract class NanoHTTPD {
             keepAlive = true;
         }
 
+        public void seOnCloseHandler(OnCloseHandler handler) {
+            this.onCloseHandler = handler;
+        }
+
         @Override
         public void close() throws IOException {
             if (this.data != null) {
                 this.data.close();
             }
+
+            if (onCloseHandler != null)
+                onCloseHandler.onClose(this);
         }
 
         /**
